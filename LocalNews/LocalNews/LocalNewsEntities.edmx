@@ -4,14 +4,24 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="LocalNewsDBModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="LocalNewsDBModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="LocalNewsDBModelStoreContainer">
           <EntitySet Name="Login_History" EntityType="LocalNewsDBModel.Store.Login_History" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Question" EntityType="LocalNewsDBModel.Store.Question" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Security" EntityType="LocalNewsDBModel.Store.Security" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="User" EntityType="LocalNewsDBModel.Store.User" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="User_Status" EntityType="LocalNewsDBModel.Store.User_Status" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Question_Security" Association="LocalNewsDBModel.Store.FK_Question_Security">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="Security" EntitySet="Security" />
+          </AssociationSet>
           <AssociationSet Name="FK_StatusLoginHistory" Association="LocalNewsDBModel.Store.FK_StatusLoginHistory">
             <End Role="User_Status" EntitySet="User_Status" />
             <End Role="Login_History" EntitySet="Login_History" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Security" Association="LocalNewsDBModel.Store.FK_User_Security">
+            <End Role="User" EntitySet="User" />
+            <End Role="Security" EntitySet="Security" />
           </AssociationSet>
           <AssociationSet Name="FK_UserLoginHistory" Association="LocalNewsDBModel.Store.FK_UserLoginHistory">
             <End Role="User" EntitySet="User" />
@@ -26,6 +36,22 @@
           <Property Name="user_id" Type="bigint" Nullable="false" />
           <Property Name="status_id" Type="bigint" Nullable="false" />
           <Property Name="date_time" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="question_id" />
+          </Key>
+          <Property Name="question_id" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="question" Type="nvarchar" Nullable="false" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="Security">
+          <Key>
+            <PropertyRef Name="security_id" />
+          </Key>
+          <Property Name="security_id" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="user_id" Type="bigint" Nullable="false" />
+          <Property Name="question_id" Type="bigint" Nullable="false" />
+          <Property Name="answer" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -44,6 +70,18 @@
           <Property Name="status_id" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="status_name" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
+        <Association Name="FK_Question_Security">
+          <End Role="Question" Type="LocalNewsDBModel.Store.Question" Multiplicity="1" />
+          <End Role="Security" Type="LocalNewsDBModel.Store.Security" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="question_id" />
+            </Principal>
+            <Dependent Role="Security">
+              <PropertyRef Name="question_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_StatusLoginHistory">
           <End Role="User_Status" Type="LocalNewsDBModel.Store.User_Status" Multiplicity="1" />
           <End Role="Login_History" Type="LocalNewsDBModel.Store.Login_History" Multiplicity="*" />
@@ -53,6 +91,18 @@
             </Principal>
             <Dependent Role="Login_History">
               <PropertyRef Name="status_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Security">
+          <End Role="User" Type="LocalNewsDBModel.Store.User" Multiplicity="1" />
+          <End Role="Security" Type="LocalNewsDBModel.Store.Security" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Security">
+              <PropertyRef Name="user_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -68,8 +118,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="LocalNewsDBModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -84,6 +133,16 @@
           <AssociationSet Name="FK_UserLoginHistory" Association="LocalNewsDBModel.FK_UserLoginHistory">
             <End Role="User" EntitySet="Users" />
             <End Role="Login_History" EntitySet="Login_History" />
+          </AssociationSet>
+          <EntitySet Name="Questions" EntityType="LocalNewsDBModel.Question" />
+          <EntitySet Name="Securities" EntityType="LocalNewsDBModel.Security" />
+          <AssociationSet Name="FK_Question_Security" Association="LocalNewsDBModel.FK_Question_Security">
+            <End Role="Question" EntitySet="Questions" />
+            <End Role="Security" EntitySet="Securities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Security" Association="LocalNewsDBModel.FK_User_Security">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Security" EntitySet="Securities" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Login_History">
@@ -107,6 +166,7 @@
           <Property Name="first_name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="last_name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Login_History" Relationship="LocalNewsDBModel.FK_UserLoginHistory" FromRole="User" ToRole="Login_History" />
+          <NavigationProperty Name="Securities" Relationship="LocalNewsDBModel.FK_User_Security" FromRole="User" ToRole="Security" />
         </EntityType>
         <EntityType Name="User_Status">
           <Key>
@@ -136,6 +196,49 @@
               <PropertyRef Name="user_id" />
             </Principal>
             <Dependent Role="Login_History">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="question_id" />
+          </Key>
+          <Property Type="Int64" Name="question_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="question1" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Securities" Relationship="LocalNewsDBModel.FK_Question_Security" FromRole="Question" ToRole="Security" />
+        </EntityType>
+        <EntityType Name="Security">
+          <Key>
+            <PropertyRef Name="security_id" />
+          </Key>
+          <Property Type="Int64" Name="security_id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int64" Name="user_id" Nullable="false" />
+          <Property Type="Int64" Name="question_id" Nullable="false" />
+          <Property Type="String" Name="answer" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Question" Relationship="LocalNewsDBModel.FK_Question_Security" FromRole="Security" ToRole="Question" />
+          <NavigationProperty Name="User" Relationship="LocalNewsDBModel.FK_User_Security" FromRole="Security" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Question_Security">
+          <End Type="LocalNewsDBModel.Question" Role="Question" Multiplicity="1" />
+          <End Type="LocalNewsDBModel.Security" Role="Security" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="question_id" />
+            </Principal>
+            <Dependent Role="Security">
+              <PropertyRef Name="question_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Security">
+          <End Type="LocalNewsDBModel.User" Role="User" Multiplicity="1" />
+          <End Type="LocalNewsDBModel.Security" Role="Security" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="Security">
               <PropertyRef Name="user_id" />
             </Dependent>
           </ReferentialConstraint>
@@ -175,7 +278,25 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="Questions">
+            <EntityTypeMapping TypeName="LocalNewsDBModel.Question">
+              <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="question1" ColumnName="question" />
+                <ScalarProperty Name="question_id" ColumnName="question_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Securities">
+            <EntityTypeMapping TypeName="LocalNewsDBModel.Security">
+              <MappingFragment StoreEntitySet="Security">
+                <ScalarProperty Name="answer" ColumnName="answer" />
+                <ScalarProperty Name="question_id" ColumnName="question_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="security_id" ColumnName="security_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

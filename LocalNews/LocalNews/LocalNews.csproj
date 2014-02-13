@@ -183,8 +183,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="BusinessLogic\Bll\UserSecurityBll.cs" />
     <Compile Include="BusinessLogic\Bll\LoginHistoryBll.cs" />
     <Compile Include="BusinessLogic\Bll\UserBll.cs" />
+    <Compile Include="BusinessLogic\Interface\IUserSecurityInterface.cs" />
     <Compile Include="BusinessLogic\Interface\ILoginHistoryInterface.cs" />
     <Compile Include="BusinessLogic\Interface\IUserInterface.cs" />
     <Compile Include="BusinessLogic\LocalNewsConstant.cs" />
@@ -215,6 +217,12 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Question.cs">
+      <DependentUpon>LocalNewsEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Security.cs">
+      <DependentUpon>LocalNewsEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>LocalNewsEntities.tt</DependentUpon>
     </Compile>
@@ -350,6 +358,8 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Account\PasswordResetStepOne.cshtml" />
+    <Content Include="Views\Account\PasswordResetStepTwo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

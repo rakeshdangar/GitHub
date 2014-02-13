@@ -1,4 +1,5 @@
-﻿@model LocalNews.Models.LoginModel
+﻿@using LocalNews.Models;
+@model LocalNews.Models.LoginModel
 
 @{
     ViewBag.Title = "Log in";
@@ -35,6 +36,8 @@
         <input type="submit" value="Log in" />
     </fieldset>
     <p>
+        @Html.ActionLink("Forgot Password", "PasswordResetStepOne", new ResetPasswordModelStepOne { Username = Model == null ? string.Empty: Model.UserName })
+    </p><p>
         @Html.ActionLink("Register", "Register") if you don't have an account.
     </p>
 }

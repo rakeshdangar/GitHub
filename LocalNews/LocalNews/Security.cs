@@ -12,21 +12,14 @@ namespace LocalNews
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class Security
     {
-        public User()
-        {
-            this.Login_History = new HashSet<Login_History>();
-            this.Securities = new HashSet<Security>();
-        }
-    
+        public long security_id { get; set; }
         public long user_id { get; set; }
-        public string username { get; set; }
-        public string password { get; set; }
-        public string first_name { get; set; }
-        public string last_name { get; set; }
+        public long question_id { get; set; }
+        public string answer { get; set; }
     
-        public virtual ICollection<Login_History> Login_History { get; set; }
-        public virtual ICollection<Security> Securities { get; set; }
+        public virtual Question Question { get; set; }
+        public virtual User User { get; set; }
     }
 }

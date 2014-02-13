@@ -6,7 +6,7 @@ using System.Web;
 using LocalNews.Models;
 using LocalNews.BusinessLogic;
 using LocalNews.BusinessLogic.Interface;
-using LocalNews.BusinessLogic.Security;
+using LocalNews.BusinessLogic.SecurityManager;
 
 namespace LocalNews.BusinessLogic.Bll
 {
@@ -152,6 +152,50 @@ namespace LocalNews.BusinessLogic.Bll
         public void Remove(int id)
         {
             users.RemoveAll(u => u.user_id == id);
+        }
+
+        public ResetPasswordModelStepTwo GetSecurityQuestion(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentNullException("username");
+            }
+
+            Security security = null;
+            using (var db = new LocalNewsDBEntities())
+            {
+                User user = db.Users.Where(u => u.username == username).FirstOrDefault();
+                security = db.Securities.Where(s => s.user_id == user.user_id).FirstOrDefault();
+            }
+
+            ResetPasswordModelStepTwo stepTwoModel = null;
+            if (null != security)
+            {
+                stepTwoModel = new ResetPasswordModelStepTwo();
+                stepTwoModel.Username = username;
+                stepTwoModel.Question = security.Question.question1;
+            }
+            return stepTwoModel;
+        }
+
+        public bool VerifySecurity(ResetPasswordModelStepTwo stepTwoModel)
+        {
+            bool isCorrectAnswer = false;
+            if (null == stepTwoModel)
+            {
+                throw new ArgumentNullException("Password Reset");
+            }
+
+            Security security = null;
+            using (var db = new LocalNewsDBEntities())
+            {
+                User user = db.Users.Where(u => u.username == stepTwoModel.Username).FirstOrDefault();
+                security = db.Securities.Where(s => s.user_id == user.user_id).FirstOrDefault();
+            }
+
+            if (null != security)
+                isCorrectAnswer = CryptoUtil.ComputeHash(stepTwoModel.Answer) == security.answer ? true : false; 
+            return isCorrectAnswer;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 
 
-namespace LocalNews.BusinessLogic.Security
+namespace LocalNews.BusinessLogic.SecurityManager
 {
     /// <summary>
     /// </summary>

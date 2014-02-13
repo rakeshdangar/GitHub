@@ -96,6 +96,32 @@ namespace LocalNews.Models
         public string LastName { get; set; }
     }
 
+    public class ResetPasswordModelStepOne
+    {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        //[Required]
+        //[Display(Name = "Email")]
+        //[DataType(DataType.EmailAddress)]
+        //public string Email { get; set; }
+    }
+
+    public class ResetPasswordModelStepTwo
+    {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        [Display(Name = "Question: ")]
+        public string Question { get; set; }
+
+        [Required]
+        [Display(Name = "Answer")]
+        public string Answer { get; set; }
+    }
+
     public class ExternalLogin
     {
         public string Provider { get; set; }

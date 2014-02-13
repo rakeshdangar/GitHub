@@ -22,7 +22,7 @@ namespace LocalNews.Controllers
     {
         static readonly IUserInterface userBll = new UserBll();
 
-        //e
+        //
         // GET: /Account/Login
 
         [AllowAnonymous]
@@ -49,6 +49,66 @@ namespace LocalNews.Controllers
             // If we got this far, something failed, redisplay form
             ModelState.AddModelError("", "The user name or password provided is incorrect.");
             return View(model);
+        }       
+
+        //
+        // GET: /Account/PasswordResetStepOne
+
+        [AllowAnonymous]
+        public ActionResult PasswordResetStepOne(string username)
+        {
+            ViewBag.username = username;
+            return View();
+        }
+
+        //
+        // POST: /Account/PasswordResetStepOne
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult PasswordResetStepOne(ResetPasswordModelStepOne stepOneModel)
+        {
+            if (ModelState.IsValid && userBll.HasLocalAccount(stepOneModel.Username))
+            {
+                return RedirectToAction("PasswordResetStepTwo", "Account", new ResetPasswordModelStepOne { Username = stepOneModel.Username });
+            }
+
+            //// If we got this far, something failed, redisplay form
+            ModelState.AddModelError("", "The account doesn't not exist with provided username .");
+            return View(stepOneModel);
+        }
+
+        //
+        // GET: /Account/PasswordResetStepOne
+
+        [AllowAnonymous]
+        public ActionResult PasswordResetStepTwo(string username)
+        {
+            ViewBag.username = username;
+            ResetPasswordModelStepTwo model = userBll.GetSecurityQuestion(username);
+
+            if(model == null)
+                ModelState.AddModelError("", "Security questions have not been setup for this account.");
+
+            return View(model);
+        }
+
+        //
+        // POST: /Account/PasswordResetStepOne
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult PasswordResetStepTwo(ResetPasswordModelStepTwo stepTwoModel)
+        {
+            if (ModelState.IsValid)
+            {
+                FormsAuthentication.SetAuthCookie(stepTwoModel.Username, false);
+                return RedirectToAction("Account", "_SetPasswordPartial");
+            }
+
+            //// If we got this far, something failed, redisplay form
+            ModelState.AddModelError("", "The username and answer provided is incorrect.");
+            return View(stepTwoModel);
         }
 
         //
@@ -115,7 +175,7 @@ namespace LocalNews.Controllers
                 using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
                 {
                     bool hasLocalAccount = userBll.HasLocalAccount(User.Identity.Name);
-                    if (hasLocalAccount || userBll.Get(User.Identity.Name) != null );
+                    if (hasLocalAccount || userBll.Get(User.Identity.Name) != null )
                     {
                         OAuthWebSecurity.DeleteAccount(provider, providerUserId);
                         scope.Complete();

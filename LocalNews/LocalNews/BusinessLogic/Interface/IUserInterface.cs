@@ -19,5 +19,7 @@ namespace LocalNews.BusinessLogic.Interface
         User Register(RegisterModel registerModel);
         void Remove(int id);
         bool Update(User user);
+        ResetPasswordModelStepTwo GetSecurityQuestion(string username);
+        bool VerifySecurity(ResetPasswordModelStepTwo stepTwoModel);
     }
 }
